@@ -74,3 +74,35 @@ REST API powinien wspierać następujące routy:
 niczego nie otrzymuje;
 wywołuje funkcję listContacts do pracy z plikiem json contacts.json;
 zwraca tablicę wszystkich kontaktów w formacie json ze statusem 200.
+
+@ GET /api/contacts/:id
+Nie otrzymuje body; – otrzymuje parametr id;
+wywołuje funkcję getById do pracy z plikami json contacts.json;
+jeżeli takie id istnieje, zwraca obiekt kontaktu w formacie json ze statusem 200;
+jeżeli takiego id nie ma, zwraca json z kluczem "message": "Not found" i statusem 404.
+
+@ POST /api/contacts
+Otrzymuje body w formacie name, email, phone} (wszystkie pola są obowiązkowe);
+jeśli w body brak jakichś obowiązkowych pól, zwraca json z kluczem {"message": "missing required name - field"} i statusem 400;
+jeśli z body wszystko w porządku, dodaje unikalny identyfikator do obiektu kontaktu;
+wywołuje funkcję addContact(body) do zapisania kontaktu w pliku contacts.json;
+w rezultacie pracy funkcji zwraca obiekt z dodanymi id {id, name, email, phone} i statusem 201.
+
+@ DELETE /api/contacts/:id
+Nie otrzymuje body;
+otrzymuje parametr id;
+wywołuje funkcję removeContact do pracy z plikiem json contacts.json;
+jeżeli takie id istnieje, zwraca formaty json {"message": "contact deleted"} ze statusem 200;
+jeśli nie ma takiego id, zwraca json z kluczem "message": "Not found" i statusem 404.
+
+@ PUT /api/contacts/:id
+Otrzymuje parametr id;
+otrzymuje body w formacie json z aktualizacją dowolnych pól name, email i phone;
+jeżeli nie ma body, zwraca json z kluczem {"message": "missing fields"} i statusem 400
+jeśli z body wszystko w porządku, wywołuje funkcję pdateContact(contactId, body) (napisz ją) dla aktualizacji kontaktu w pliku contacts.json;
+w rezultacie pracy funkcji zwraca zaktualizowany obiekt kontaktu ze statusem 200. W przeciwnym razie - zwraca json z kluczem "message": "Not found" i statusem 404.
+
+Krok 3
+Dla tras, które przyjmują dane (POST i PUT), przemyśl sprawdzenie (walidację) przyjmowanych danych. Do walidacji wykorzystaj pakiet joi.
+
+https://github.com/sideway/joi
