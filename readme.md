@@ -106,3 +106,70 @@ Krok 3
 Dla tras, które przyjmują dane (POST i PUT), przemyśl sprawdzenie (walidację) przyjmowanych danych. Do walidacji wykorzystaj pakiet joi.
 
 https://github.com/sideway/joi
+
+
+HW3
+Utwórz gałąź hw03-mongodb z gałęzi master.
+
+Kontynuuj tworzenie REST API do pracy ze zbiorem kontaktów.
+
+Krok 1
+
+Stwórz konto na MongoDB Atlas, a następnie na koncie utwórz nowy projekt i skonfiguruj bezpłatny klaster. W czasie konfigurowania klastera wybierz provider i region, jak na screenshocie poniżej. Jeżeli wybierzesz zbyt oddalony region, serwer odpowie wolniej.
+
+https://www.mongodb.com/products/compass
+
+Krok 2
+
+Skonfiguruj edytor graficzny MongoDB Compass do wygodnej pracy z bazą danych dla MongoDB. Skonfiguruj podłączenie swojej chmury do Compass. W MongoDB Atlas nie zapomnij utworzyć użytkownika z prawami administratora.
+
+https://www.mongodb.com/download-center/compass
+
+Krok 3
+
+Przez Compass utwórz bazę danych db-contacts, a w niej zbiór contacts. Weź link do json i przy pomocy Compass wypełnij zbiór contacts (zaimportuj) jego zawartością.
+
+https://github.com/goitacademy/nodejs-homework/blob/master/homework-03/contacts.json
+
+Jeżeli wszystko zrobiłeś prawidłowo, dane powinny się pojawić w twojej bazie w zbiorze contacts
+
+Krok 4
+
+Wykorzystaj kod źródłowy zadania domowego #2 i zamień zapisywanie kontaktów z pliku json na utworzoną przez siebie bazę danych.
+
+Napisz kod do utworzenia podłączenia do MongoDB przy pomocy Mongoose. https://mongoosejs.com/
+Przy sukcesie podłączenia wyprowadź na konsolę wiadomość "Database connection successful".
+Obowiązkowo opracuj błąd podłączenia. Wyprowadź na konsolę wiadomość o błędzie i zakończ proces, wykorzystując process.exit(1).
+W funkcjach opracowywania zapytań zamień kod operacji CRUD na kontaktach z pliku, na metody Mongoose do pracy ze zbiorem kontaktów w bazie danych.
+
+Schemat modeli dla zbioru contacts:
+
+{
+name: {
+type: String,
+required: [true, 'Set name for contact'],
+},
+email: {
+type: String,
+},
+phone: {
+type: String,
+},
+favorite: {
+type: Boolean,
+default: false,
+},
+}
+
+Krok 5
+
+W naszych kontaktach pojawiło się dodatkowe pole statusu favorite, które przyjmuje logiczną wartość true lub false. Odpowiada ono za to, że wskazany kontakt znajduje się lub nie w ulubionych. Zrealizuj dla aktualizacji statusu kontaktu nową trasę.
+
+@ PATCH /api/contacts/:contactId/favorite
+
+Otrzymuje parametr contactId.
+Otrzymuje body w formacie json z aktualizacją pola favorite.
+Jeżeli body nie ma, zwraca json z kluczem {"message": "missing field favorite"} i statusem 400.
+Jeżeli w body wszystko się zgadza to wywołaj funkcję updateStatusContact(contactId, body) (napisz ją), aby zaktualizować kontakt w bazie danych
+W wyniku pracy funkcji zwraca zaktualizowany obiekt kontaktu ze statusem 200. W przeciwnym razie zwraca json z kluczem "message": "Not found" i statusem 404.
+
