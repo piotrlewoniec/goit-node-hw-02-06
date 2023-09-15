@@ -1,4 +1,5 @@
 const app = require("./app");
+
 // const appdb = require("./app");
 
 const db = require("./models/contactsdb");
@@ -13,9 +14,11 @@ const db = require("./models/contactsdb");
   }
 })();
 
+
 app.listen(3000, () => {
   console.log("Server running. Use our API on port: 3000");
 });
+
 
 // appdb.listen(3001, () => {
 //   console.log("Server running. Use our API on port: 3001");
@@ -50,3 +53,4 @@ process.on("exit", function () {
     process.exit(0);
   });
 });
+

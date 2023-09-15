@@ -2,6 +2,7 @@ const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
 const path = require("path");
+
 const db = require("./models/contactsdb");
 
 const contactsRouter = require("./routes/api/contacts");
@@ -13,9 +14,11 @@ const app = express();
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
 // const formatsLoggerdb = appdb.get("env") === "development" ? "dev" : "short";
 
+
 app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
+
 
 // appdb.use(logger(formatsLoggerdb));
 // appdb.use(cors());
@@ -23,6 +26,7 @@ app.use(express.json());
 
 app.use("/api/v1/contacts", contactsRouter);
 app.use("/api/v2/contacts", contactsDBRouter);
+
 
 app.use("/css", express.static(path.join(__dirname, "views/pages/css")));
 app.use("/js", express.static(path.join(__dirname, "views/pages/js")));
@@ -41,6 +45,7 @@ app.get("/uptime/db", function (req, res) {
   });
 });
 
+
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });
 });
@@ -49,6 +54,7 @@ app.use((req, res) => {
 //   res.status(404).json({ message: "Not found" });
 // });
 
+
 app.use((err, req, res, next) => {
   res.status(500).json({ message: err.message });
 });
@@ -56,5 +62,6 @@ app.use((err, req, res, next) => {
 // appdb.use((err, req, res, next) => {
 //   res.status(500).json({ message: err.message });
 // });
+
 
 module.exports = app;

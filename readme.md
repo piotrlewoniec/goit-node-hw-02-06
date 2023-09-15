@@ -107,6 +107,7 @@ Dla tras, które przyjmują dane (POST i PUT), przemyśl sprawdzenie (walidację
 
 https://github.com/sideway/joi
 
+
 HW3
 Utwórz gałąź hw03-mongodb z gałęzi master.
 
@@ -171,3 +172,4 @@ Otrzymuje body w formacie json z aktualizacją pola favorite.
 Jeżeli body nie ma, zwraca json z kluczem {"message": "missing field favorite"} i statusem 400.
 Jeżeli w body wszystko się zgadza to wywołaj funkcję updateStatusContact(contactId, body) (napisz ją), aby zaktualizować kontakt w bazie danych
 W wyniku pracy funkcji zwraca zaktualizowany obiekt kontaktu ze statusem 200. W przeciwnym razie zwraca json z kluczem "message": "Not found" i statusem 404.
+
