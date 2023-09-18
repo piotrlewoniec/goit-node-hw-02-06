@@ -1,12 +1,20 @@
 const app = require("./app");
 
+require("dotenv").config();
+const uriDbENV = process.env.uriDb;
+const secret = process.env.secret;
+const dbname = "db-contacts";
 // const appdb = require("./app");
+const Userdb = require("./models/mongodb/schemas/user");
 
-const db = require("./models/contactsdb");
+const db = require("./models/mongodb/status/dbconnections");
+const auth = require("./models/mongodb/auth/auth");
+
+auth.strategyJWT({ secret: secret, User: Userdb });
 
 (async () => {
   try {
-    await db.connectdb;
+    await db.connectdb({ uriDbENV: uriDbENV, dbname: dbname });
     console.log(`Connected to database`);
   } catch (err) {
     console.log(`Connection to database faild: ${err.message}`);
@@ -14,11 +22,9 @@ const db = require("./models/contactsdb");
   }
 })();
 
-
 app.listen(3000, () => {
   console.log("Server running. Use our API on port: 3000");
 });
-
 
 // appdb.listen(3001, () => {
 //   console.log("Server running. Use our API on port: 3001");
@@ -53,4 +59,3 @@ process.on("exit", function () {
     process.exit(0);
   });
 });
-
