@@ -10,6 +10,7 @@ const contactsDBRouter = require("./routes/api/mongodb/contactsroutesdb");
 const usersDBRouter = require("./routes/api/mongodb/userroutesdb");
 const contactsDBrouterAuth = require("./routes/api/mongodb/contactsroutesauthdb");
 
+
 const app = express();
 // const appdb = express();
 
@@ -66,6 +67,7 @@ app.use((err, req, res, next) => {
     message: err.message,
     data: "Internal Server Error",
   });
+
 });
 
 // appdb.use((err, req, res, next) => {
