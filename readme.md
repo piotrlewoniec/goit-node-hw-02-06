@@ -380,6 +380,7 @@ Aktualizacja subskrypcji (subscription) użytkownika przez endpoint PATCH /users
 
 ///////////////////////////////////////////////////////////////////////////////////
 HW5
+
 Utwórz gałąź hw05-avatars z gałęzi master.
 
 Kontynuuj tworzenie REST API do pracy ze zbiorem kontaktów. Dodaj opcję ładowania awataru użytkownika przez Multer. https://github.com/expressjs/multer
@@ -456,3 +457,4 @@ Zadanie dodatkowe – nieobowiązkowe
 1. Napisać unit-testy dla kontrolera wejścia (login/signin)
    Przy pomocy Jest https://jestjs.io/ru/docs/getting-started
    odpowiedź powinna mieć status kod 200; w odpowiedzi powinien być zwracany token; w odpowiedzi powinien być zwracany obiekt user z 2 polami email i subscription, mającymi typ danych String.
+

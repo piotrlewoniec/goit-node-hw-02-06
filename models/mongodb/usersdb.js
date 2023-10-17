@@ -3,6 +3,7 @@ const dbstatus = require("./status/dbstate");
 const auth = require("./auth/auth");
 require("dotenv").config();
 const secret = process.env.secret;
+
 const gravatar = require("gravatar");
 
 const isRegistred = async ({ email }) => {
