@@ -99,6 +99,7 @@ const postUserRegisterDB = async (req, res, next) => {
       data: {
         email: newUser.email,
         subscription: newUser.subscription,
+        avatarURL: newUser.avatarURL,
       },
     });
   } catch (error) {
@@ -155,6 +156,7 @@ const postUserLoginDB = async (req, res, next) => {
       user: {
         email: loggedIn.email,
         subscription: loggedIn.subscription,
+        avatarURL: loggedIn.avatarURL,
       },
       token: loggedIn.token,
     },
@@ -200,6 +202,7 @@ const getUserCurrentDB = async (req, res, next) => {
     data: {
       email: currentLoggedIn.email,
       subscription: currentLoggedIn.subscription,
+      avatarURL: currentLoggedIn.avatarURL,
     },
   });
 };
@@ -247,6 +250,27 @@ const patchUserSubscription = async (req, res, next) => {
   }
 };
 
+const patchUserAvatars = async (req, res, next) => {
+  const { _id, avatarURL } = req.user;
+  const data = await usersdb.avatarUpdate({ _id: _id, avatarPath: avatarURL });
+  if (data === "error") {
+    return res.status(401).json({
+      status: "Unauthorized",
+      code: 401,
+      message: "Unauthorized",
+      data: "Unauthorized",
+    });
+  }
+  return res.status(200).json({
+    status: "OK",
+    code: 200,
+    message: "avatarURL",
+    data: {
+      avatarURL: data.avatarURL,
+    },
+  });
+};
+
 module.exports = {
   getUserInfoDB,
   postUserRegisterDB,
@@ -254,5 +278,6 @@ module.exports = {
   getUserLogoutDB,
   getUserCurrentDB,
   patchUserSubscription,
+  patchUserAvatars,
   authmidd,
 };

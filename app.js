@@ -10,7 +10,6 @@ const contactsDBRouter = require("./routes/api/mongodb/contactsroutesdb");
 const usersDBRouter = require("./routes/api/mongodb/userroutesdb");
 const contactsDBrouterAuth = require("./routes/api/mongodb/contactsroutesauthdb");
 
-
 const app = express();
 // const appdb = express();
 
@@ -33,6 +32,7 @@ app.use("/api/v3/contacts", contactsDBrouterAuth);
 app.use("/css", express.static(path.join(__dirname, "views/pages/css")));
 app.use("/js", express.static(path.join(__dirname, "views/pages/js")));
 app.use("/images", express.static(path.join(__dirname, "views/pages/images")));
+app.use("/avatars", express.static(path.join(__dirname, "public/avatars")));
 
 app.set("view engine", "ejs");
 app.get("/", function (req, res) {

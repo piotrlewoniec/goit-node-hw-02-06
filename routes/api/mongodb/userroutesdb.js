@@ -1,5 +1,7 @@
 const ctrlUsersDB = require("./usercontroller");
 
+const ctrlFileUpload = require("../../../models/fileupload/multer");
+
 const expressdb = require("express");
 const routerUsersdb = expressdb.Router();
 
@@ -16,6 +18,14 @@ routerUsersdb.patch(
   "/:userId/subscription",
   ctrlUsersDB.authmidd,
   ctrlUsersDB.patchUserSubscription
+);
+
+routerUsersdb.patch(
+  "/avatars",
+  ctrlUsersDB.authmidd,
+  ctrlFileUpload.upload.single("avatar"),
+  ctrlFileUpload.uploadAvatar,
+  ctrlUsersDB.patchUserAvatars
 );
 
 module.exports = routerUsersdb;

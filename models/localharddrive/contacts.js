@@ -7,10 +7,6 @@ async function loadFile(path) {
   let file;
   try {
     file = await fs.readFile(path);
-  } catch (err) {
-    return "error";
-  }
-  try {
     return JSON.parse(file.toString());
   } catch (err) {
     return "error";

@@ -4,6 +4,8 @@ const auth = require("./auth/auth");
 require("dotenv").config();
 const secret = process.env.secret;
 
+const gravatar = require("gravatar");
+
 const isRegistred = async ({ email }) => {
   try {
     if (dbstatus.dbstatusValue() !== 1) {
@@ -27,7 +29,12 @@ const registerUser = async ({ email, password, subscription }) => {
     if (dbstatus.dbstatusValue() !== 1) {
       return "error";
     }
-    const newUser = new Userdb({ email, subscription });
+    const avatarURL = gravatar.url(
+      email,
+      { s: "100", r: "x", d: "retro" },
+      true
+    );
+    const newUser = new Userdb({ email, subscription, avatarURL });
     newUser.setPassword(password);
     await newUser.save();
     return newUser;
@@ -142,6 +149,26 @@ const subscriptionUpdate = async ({ _id, subscription }) => {
   }
 };
 
+const avatarUpdate = async ({ _id, avatarPath }) => {
+  try {
+    if (dbstatus.dbstatusValue() !== 1) {
+      return "error";
+    }
+    const data = await Userdb.findOneAndUpdate(
+      { _id: _id },
+      { avatarURL: avatarPath },
+      { new: true }
+    );
+    if (data === null) {
+      return "error";
+    }
+    return data;
+  } catch (err) {
+    console.log(`Connection to database faild: ${err.message}`);
+    return "error";
+  }
+};
+
 module.exports = {
   isRegistred,
   registerUser,
@@ -149,4 +176,5 @@ module.exports = {
   logoutUser,
   currentUser,
   subscriptionUpdate,
+  avatarUpdate,
 };
