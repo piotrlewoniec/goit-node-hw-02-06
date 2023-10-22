@@ -654,3 +654,4 @@ lista niezorganiozwana pogrubiony tekst
 [downloads-url]: https://npmjs.org/package/sendmail
 [npm-issues-image]: https://img.shields.io/github/issues/guileen/node-sendmail.svg
 [npm-issues-url]: https://github.com/guileen/node-sendmail/issues
+

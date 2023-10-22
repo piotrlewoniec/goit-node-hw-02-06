@@ -35,19 +35,14 @@ const uploadAvatar = async (req, res, next) => {
   try {
     const image = await Jimp.read(pathWithFileName);
     image.resize(250, 250).write(pathWithFileName);
-  } catch (err) {
-    console.log(`Jimp failed: ${err.message}`);
-    return next(err);
-  }
-  try {
+
     await fs.rename(pathWithFileName, pathWithFileNameFinal);
   } catch (err) {
     await fs.unlink(pathWithFileName);
-    console.log(`Moving file failed: ${err.message}`);
+    console.log(`Error: ${err.message}`);
     return next(err);
   }
   req.user.avatarURL = avatarUrl;
-  console.log(req.user);
   next();
 };
 

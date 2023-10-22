@@ -1,4 +1,5 @@
 const ctrlUsersDB = require("./usercontroller");
+
 const ctrlFileUpload = require("../../../models/fileupload/multer");
 
 const expressdb = require("express");
@@ -18,6 +19,7 @@ routerUsersdb.patch(
   ctrlUsersDB.authmidd,
   ctrlUsersDB.patchUserSubscription
 );
+
 routerUsersdb.patch(
   "/avatars",
   ctrlUsersDB.authmidd,
@@ -25,6 +27,7 @@ routerUsersdb.patch(
   ctrlFileUpload.uploadAvatar,
   ctrlUsersDB.patchUserAvatars
 );
+
 routerUsersdb.get("/verify/:verificationToken", ctrlUsersDB.getVerifyEmail);
 routerUsersdb.post("/verify", ctrlUsersDB.postVerifyEmailResend);
 

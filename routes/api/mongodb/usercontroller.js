@@ -1,6 +1,7 @@
 const usersdb = require("../../../models/mongodb/usersdb");
 // const User = require("../../../models/mongodb/schemas/user");
 const passport = require("passport");
+
 const nodemailer = require("../../../models/mail/nodemailer");
 
 const authmidd = (req, res, next) => {
@@ -93,12 +94,14 @@ const postUserRegisterDB = async (req, res, next) => {
         code: 500,
       });
     }
+
     const hostAddress = req.protocol + "://" + req.get("host");
     nodemailer.sendEmail({
       email: newUser.email,
       verificationToken: newUser.verificationToken,
       hostAddress: hostAddress,
     });
+
     res.status(201).json({
       status: "Created",
       code: 201,
@@ -155,6 +158,7 @@ const postUserLoginDB = async (req, res, next) => {
       data: "Unauthorized",
     });
   }
+
   if (loggedIn === "verify email") {
     return res.status(403).json({
       status: "Forbidden",
