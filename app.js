@@ -67,7 +67,6 @@ app.use((err, req, res, next) => {
     message: err.message,
     data: "Internal Server Error",
   });
-
 });
 
 // appdb.use((err, req, res, next) => {

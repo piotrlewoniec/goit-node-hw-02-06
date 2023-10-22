@@ -1,5 +1,4 @@
 const app = require("./app");
-
 require("dotenv").config();
 const uriDbENV = process.env.uriDb;
 const secret = process.env.secret;
@@ -9,6 +8,8 @@ const Userdb = require("./models/mongodb/schemas/user");
 
 const db = require("./models/mongodb/status/dbconnections");
 const auth = require("./models/mongodb/auth/auth");
+
+// const nodemailer = require("./models/mail/nodemailer");
 
 auth.strategyJWT({ secret: secret, User: Userdb });
 

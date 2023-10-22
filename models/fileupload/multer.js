@@ -35,6 +35,7 @@ const uploadAvatar = async (req, res, next) => {
   try {
     const image = await Jimp.read(pathWithFileName);
     image.resize(250, 250).write(pathWithFileName);
+
     await fs.rename(pathWithFileName, pathWithFileNameFinal);
   } catch (err) {
     await fs.unlink(pathWithFileName);

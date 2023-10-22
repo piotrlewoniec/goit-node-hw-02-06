@@ -28,4 +28,7 @@ routerUsersdb.patch(
   ctrlUsersDB.patchUserAvatars
 );
 
+routerUsersdb.get("/verify/:verificationToken", ctrlUsersDB.getVerifyEmail);
+routerUsersdb.post("/verify", ctrlUsersDB.postVerifyEmailResend);
+
 module.exports = routerUsersdb;

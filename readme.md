@@ -380,7 +380,6 @@ Aktualizacja subskrypcji (subscription) użytkownika przez endpoint PATCH /users
 
 ///////////////////////////////////////////////////////////////////////////////////
 HW5
-
 Utwórz gałąź hw05-avatars z gałęzi master.
 
 Kontynuuj tworzenie REST API do pracy ze zbiorem kontaktów. Dodaj opcję ładowania awataru użytkownika przez Multer. https://github.com/expressjs/multer
@@ -449,12 +448,210 @@ Zadanie dodatkowe – nieobowiązkowe
    odpowiedź powinna mieć status kod 200; w odpowiedzi powinien być zwracany token; w odpowiedzi powinien być zwracany obiekt user z 2 polami email i subscription, mającymi typ danych String.
 
 ///////////////////////////////////////////////////////////////////////////////////
+HW6
+Utwórz gałąź hw06-email z gałęzi master.
+
+Kontynuujemy tworzenie REST API pracy ze zbiorem kontaktów. Dodaj weryfikację emaila użytkownika po rejestracji przy pomocy serwisu SendGrid.
+https://sendgrid.com/
+
+Jak powinien działać proces weryfikacji
+
+1. Po rejestracji użytkownik powinien otrzymać wiadomość na wskazaną przy rejestracji pocztę z odnośnikiem do weryfikacji swojego emaila.
+2. Przechodząc do odnośnika w otrzymanej wiadomości po raz pierwszy, użytkownik powinien otrzymać Odpowiedź ze statusem 200, co będzie oznaczać pomyślną weryfikację emaila.
+3. Przechodząc po odnośniku powtórnie użytkownik powinien otrzymać Błąd ze statusem 404.
+
+Krok 1
+
+Przygotowanie integracji z SendGrid API
+
+Zarejestruj się na SendGrid.https://sendgrid.com/
+
+Utwórz email nadawcy. W tym celu w panelu administratora SendGrid przejdź do menu Marketing w podmenu senders i w prawym górnym rogu wciśnij przycisk "Create New Sender". Uzupełnij wymagane pola w dołączonym formularzu. Zapisz. Rezultat powinien wyglądać jak na obrazku, tylko z twoim adresem email:
+
+Na wskazany email powinna przyjść wiadomość weryfikacyjna (sprawdź spam, jeśli nie widzisz wiadomości). Kliknij na odnośnik w niej i zakończ proces. Wynik powinien zmienić się na:
+
+Teraz należy utworzyć API token dostępu. Wybieramy menu "Email API" i podmenu "Integration Guide". Tutaj wybieramy "Web API".
+
+Dalej należy wybrać technologię Node.js.
+
+W trzecim kroku nazywamy nasz token, na przykład systemcats. Klikamy na przycisk "wygeneruj" i otrzymujemy wynik jak na zrzucie ekranu niżej. Należy skopiować ten token (to ważne, ponieważ więcej nie możesz go zobaczyć). Następnie zakończ proces tworzenia tokena.
+
+Otrzymany token API należy dodać do pliku .env w naszym projekcie.
+
+Krok 2
+
+Utworzenie endpointu dla weryfikacji emaila
+
+Dodaj do modelu User dwa pola verificationToken i verify. Wartość pola verify równa false będzie oznaczać, że email jeszcze nie przeszedł weryfikacji.
+
+{
+verify: {
+type: Boolean,
+default: false,
+},
+verificationToken: {
+type: String,
+required: [true, 'Verify token is required'],
+},
+}
+
+Utwórz endpoint GET /users/verify/:verificationToken, gdzie w parametrze verificationToken będziemy szukać użytkownika w modelu User;
+
+jeśli użytkownik z takim tokenem nie zostanie znaleziony, należy zwrócić Błąd 'Not Found';
+
+jeśli użytkownik został odnaleziony – ustawiamy verificationToken na null, a pole verify ustawiamy jako równe true w dokumencie użytkownika zwracamy Sukces odpowiedzi.
+
+Verification request
+GET /auth/verify/:verificationToken
+
+Verification user Not Found
+Status: 404 Not Found
+ResponseBody: {
+message: 'User not found'
+}
+
+Verification success response
+Status: 200 OK
+ResponseBody: {
+message: 'Verification successful',
+}
+
+Krok 3
+
+Dodanie wysłania emaila do użytkownika z odnośnikiem dla weryfikacji
+
+Podczas tworzenia użytkownika przy rejestracji:
+
+utworzyć verificationToken dla użytkownika i zapisać go w bazie danych (do wygenerowania tokena wykorzystaj pakiet uuid lub nanoid); https://www.npmjs.com/package/uuid https://www.npmjs.com/package/nanoid
+wysłać email na pocztę użytkownika i wskazać odnośnik do weryfikacji emaila (/users/verify/:verificationToken) w wiadomości;
+należy wziąć pod uwagę, że teraz login użytkownika nie jest dozwolony przy nieweryfikowanym emailu.
+
+Krok 4
+
+Dodanie powtórnego wysłania emaila do użytkownika z odnośnikiem dla weryfikacji
+
+Należy przewidzieć wariant, że użytkownik może po prostu usunąć wiadomość, z jakiejś przyczyna może ona nie dojść do adresata albo nasz serwis wysyłania wiadomości w czasie rejestracji wyświetlił błąd i tak dalej.
+
+@ POST /users/verify/
+Otrzymuje body w formacie { email }.
+Jeśli w body nie ma obowiązkowego pola email, zwraca json z kluczem {"message": "missing required field email"} i statusem 400.
+Jeśli z body wszystko w porządku, wykonujemy ponownie wysłanie wiadomości z verificationToken na wskazany email, ale tylko jeśli użytkownik nie został zweryfikowany.
+Jeżeli użytkownik przeszedł już weryfikację, wysłać json z kluczem { message: "Verification has already been passed"} ze statusem 400 Bad Request.
+
+Resending a email request
+
+POST /users/verify
+Content-Type: application/json
+RequestBody: {
+"email": "example@example.com"
+}
+
+Resending a email validation error
+
+Status: 400 Bad Request
+Content-Type: application/json
+ResponseBody: <Błąd z Joi lub innej biblioteki walidacji>
+
+Resending a email success response
+
+Status: 200 Ok
+Content-Type: application/json
+ResponseBody: {
+"message": "Verification email sent"
+}
+
+Resend email for verified user
+
+Status: 400 Bad Request
+Content-Type: application/json
+ResponseBody: {
+message: "Verification has already been passed"
+}
+
+WSKAZÓWKA
+Jako alternatywę SendGrid można wykorzystać pakiet nodemailer. https://www.npmjs.com/package/nodemailer
+
+Zadanie dodatkowe – nieobowiązkowe
+
+1. Napisz dockerfile dla twojej aplikacji
 
 ///////////////////////////////////////////////////////////////////////////////////
-HW5 ToDo
+HW5
 Zadanie dodatkowe – nieobowiązkowe
 
 1. Napisać unit-testy dla kontrolera wejścia (login/signin)
    Przy pomocy Jest https://jestjs.io/ru/docs/getting-started
    odpowiedź powinna mieć status kod 200; w odpowiedzi powinien być zwracany token; w odpowiedzi powinien być zwracany obiekt user z 2 polami email i subscription, mającymi typ danych String.
+
+HW6
+Zadanie dodatkowe – nieobowiązkowe
+
+1. Napisz dockerfile dla twojej aplikacji
+
+///////////////////////////////////////////////////////////////////////////////////
+
+# tekst gruby z podrkeśleniem
+
+## tekst gruby z podkreśleniem mniejsza czcionka
+
+### tekst gruby
+
+- lista niezorganizowana zaczyna się od \*
+
+`zaznaczony tekst`
+
+```bash
+tekst do skopiowania
+npm install  --save
+# or
+yarn add
+```
+
+```javascript
+kod do skopiowania
+
+const sendmail = require("sendmail")({
+  logger: {
+    debug: console.log,
+    info: console.info,
+    warn: console.warn,
+    error: console.error,
+  },
+  silent: false,
+  dkim: {
+    // Default: False
+    privateKey: fs.readFileSync("./dkim-private.pem", "utf8"),
+    keySelector: "mydomainkey",
+  },
+  devPort: 1025, // Default: False
+  devHost: "localhost", // Default: localhost
+  smtpPort: 2525, // Default: 25
+  smtpHost: "localhost", // Default: -1 - extra smtp host after resolveMX
+});
+```
+
+link w [] opis linku w () link
+[Here](https://github.com/nodemailer/mailcomposer#attachments)
+
+lista niezorganiozwana pogrubiony tekst w [] opis linku w () link
+
+- **[smtpPort.js](https://github.com/guileen/node-sendmail/blob/master/examples/smtpPort.js)**
+
+lista niezorganiozwana pogrubiony tekst
+
+- **from**
+
+[![npm][npm-image]][npm-url]
+[![downloads][downloads-image]][downloads-url]
+[![npm-issues][npm-issues-image]][npm-issues-url]
+[![js-standard-style][standard-image]][standard-url]
+
+[standard-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
+[standard-url]: http://standardjs.com/
+[npm-image]: https://img.shields.io/npm/v/sendmail.svg?style=flat
+[npm-url]: https://npmjs.org/package/sendmail
+[downloads-image]: https://img.shields.io/npm/dt/sendmail.svg?style=flat
+[downloads-url]: https://npmjs.org/package/sendmail
+[npm-issues-image]: https://img.shields.io/github/issues/guileen/node-sendmail.svg
+[npm-issues-url]: https://github.com/guileen/node-sendmail/issues
 

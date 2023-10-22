@@ -3,8 +3,8 @@ const dbstatus = require("./status/dbstate");
 const auth = require("./auth/auth");
 require("dotenv").config();
 const secret = process.env.secret;
-
 const gravatar = require("gravatar");
+const { nanoid } = require("nanoid");
 
 const isRegistred = async ({ email }) => {
   try {
@@ -34,7 +34,13 @@ const registerUser = async ({ email, password, subscription }) => {
       { s: "100", r: "x", d: "retro" },
       true
     );
-    const newUser = new Userdb({ email, subscription, avatarURL });
+    const verificationToken = nanoid();
+    const newUser = new Userdb({
+      email,
+      subscription,
+      avatarURL,
+      verificationToken,
+    });
     newUser.setPassword(password);
     await newUser.save();
     return newUser;
@@ -54,6 +60,10 @@ const loginUser = async ({ email, password }) => {
     if (!data || !data.validPassword(password)) {
       return "error";
     }
+    if (data.verify === false) {
+      return "verify email";
+    }
+
     // if (
     //   !data ||
     //   !auth.validPassword({
@@ -169,6 +179,49 @@ const avatarUpdate = async ({ _id, avatarPath }) => {
   }
 };
 
+const verifyEmail = async ({ verificationToken }) => {
+  try {
+    if (dbstatus.dbstatusValue() !== 1) {
+      return "error";
+    }
+
+    const data = await Userdb.findOneAndUpdate(
+      { verificationToken: verificationToken },
+      { verificationToken: null, verify: true },
+      { new: true }
+    );
+
+    if (data === null) {
+      return "not found";
+    }
+    return "ok";
+  } catch (err) {
+    console.log(`Connection to database faild: ${err.message}`);
+    return "error";
+  }
+};
+
+const verifyEmailResend = async ({ email }) => {
+  try {
+    if (dbstatus.dbstatusValue() !== 1) {
+      return "error";
+    }
+
+    const data = await Userdb.findOne({ email: email });
+    if (data === null) {
+      return "error";
+    }
+    if (data.verify === true) {
+      return "verified";
+    } else {
+      return data;
+    }
+  } catch (err) {
+    console.log(`Connection to database faild: ${err.message}`);
+    return "error";
+  }
+};
+
 module.exports = {
   isRegistred,
   registerUser,
@@ -177,4 +230,6 @@ module.exports = {
   currentUser,
   subscriptionUpdate,
   avatarUpdate,
+  verifyEmail,
+  verifyEmailResend,
 };
